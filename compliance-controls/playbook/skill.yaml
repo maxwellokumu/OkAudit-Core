@@ -1,0 +1,17 @@
+name: "compliance-controls-playbook"
+version: "1.0.0"
+description: "Step-by-step compliance audit methodology covering framework selection, evidence planning, control testing, exceptions handling, and reporting."
+author: "IT Audit Team"
+license: "MIT"
+triggers:
+  - keywords: ["compliance playbook", "compliance audit steps", "control testing methodology"]
+  - patterns: ["compliance.*playbook", "compliance.*audit.*step"]
+parameters:
+  - name: step
+    type: string
+    required: false
+    description: "Step number (1-5) or 'full' (default: full)"
+execution:
+  runtime: "python"
+  command: "python main.py"
+  args: ["--step", "{{step}}"]

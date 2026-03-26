@@ -1,0 +1,29 @@
+name: "sod-analyzer"
+version: "1.0.0"
+description: "Detect segregation of duties conflicts in user role assignments. Checks against a built-in library of 20 common SOD violations and/or custom conflict rules."
+author: "IT Audit Team"
+license: "MIT"
+triggers:
+  - keywords: ["segregation of duties", "SOD", "role conflict", "duties separation", "four eyes"]
+  - patterns: ["sod.*analys", "segregat.*duties", "role.*conflict"]
+parameters:
+  - name: users
+    type: string
+    required: true
+    description: "Path to JSON file mapping usernames to roles"
+  - name: conflicts
+    type: string
+    required: false
+    description: "Path to JSON file with custom conflict pairs"
+  - name: builtin_conflicts
+    type: boolean
+    required: false
+    description: "Include built-in library of 20 common SOD conflicts"
+execution:
+  runtime: "python"
+  command: "python main.py"
+  args:
+    - "--users"
+    - "{{users}}"
+    - "--conflicts"
+    - "{{conflicts}}"

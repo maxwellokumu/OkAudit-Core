@@ -1,0 +1,29 @@
+name: "iam-access-review"
+version: "1.0.0"
+description: "Analyse IAM policies for excessive permissions, wildcards, admin-equivalent actions, missing conditions, and inline policies. Supports local file, AWS, and Azure modes."
+author: "IT Audit Team"
+license: "MIT"
+triggers:
+  - keywords: ["iam review", "access review", "policy review", "excessive permissions", "wildcard permissions", "least privilege"]
+  - patterns: ["review.*iam.*polic", "audit.*access.*polic", "check.*permissions"]
+parameters:
+  - name: input
+    type: string
+    required: false
+    description: "Path to IAM policy JSON file or raw JSON string (required for local mode)"
+  - name: mode
+    type: string
+    required: false
+    description: "Execution mode: local (default), aws, or azure"
+  - name: dry_run
+    type: boolean
+    required: false
+    description: "Use bundled sample data instead of live API calls"
+execution:
+  runtime: "python"
+  command: "python main.py"
+  args:
+    - "--input"
+    - "{{input}}"
+    - "--mode"
+    - "{{mode}}"

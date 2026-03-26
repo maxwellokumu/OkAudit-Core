@@ -1,0 +1,7 @@
+[
+  ["developer", "test_engineer", "Medium", "Developers testing their own code reduces defect detection effectiveness."],
+  ["patch_management", "vulnerability_scanner", "Medium", "Managing patches and scanning for vulnerabilities removes independent verification."],
+  ["export_data", "approve_export", "High", "Exporting and self-approving data exports enables unauthorised data exfiltration."],
+  ["generate_reports", "approve_reports", "Medium", "Generating and approving reports removes the four-eyes control on financial data."],
+  ["user_provisioning", "access_certification", "High", "Provisioning users and certifying access removes independent access oversight."]
+]
