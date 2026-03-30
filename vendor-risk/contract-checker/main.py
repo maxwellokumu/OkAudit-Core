@@ -75,7 +75,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--requirements", help="Path to JSON list of custom required clauses")
     parser.add_argument(
         "--standard",
-        choices=["vendor", "saas", "data-processor"],
+        choices=["vendor", "saas", "data-processor", "gdpr"],
         help="Load built-in clause set for this contract type",
     )
     return parser.parse_args()
@@ -263,8 +263,9 @@ def main() -> None:
     contract_text = load_contract(args.contract)
 
     clauses: List[Dict[str, Any]] = []
-    if args.standard:
-        clauses.extend(CLAUSE_LIBRARY[args.standard])
+    standard = "data-processor" if args.standard == "gdpr" else args.standard
+    if standard:
+        clauses.extend(CLAUSE_LIBRARY[standard])
     if args.requirements:
         clauses.extend(load_custom_clauses(args.requirements))
 
@@ -278,7 +279,7 @@ def main() -> None:
         else:
             missing.append(clause)
 
-    print(render_report(args.contract, args.standard, clauses, found, missing))
+    print(render_report(args.contract, standard, clauses, found, missing))
 
 
 if __name__ == "__main__":
