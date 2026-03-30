@@ -111,7 +111,7 @@ Use the Claude Skills repository if you want upload-ready practitioner packages.
 
 OkAudit follows a layered architecture where raw system data is ingested, transformed through modular AI skills, and surfaced as structured, framework-aligned audit intelligence. Each layer is independently testable and replaceable.
 
----
+```
 
 ## Skill Domains
 
@@ -129,7 +129,7 @@ OkAudit organizes its 36 skills across 9 specialist audit roles:
 |  **Hardware & Assets** | Asset Inventory, Configuration Baseline, EOL Detection | Asset discovery, baseline drift detection, end-of-life flagging |
 |  **Application Security** | Code Review, Dependency Audit, Auth Analysis | SAST-aligned code review, CVE detection in dependencies, auth flow analysis |
 
----
+```
 
 ## Quick Start
 
@@ -152,7 +152,7 @@ python main.py \
   --roles "iam,network" \
   --frameworks "PCI-DSS"
 
----
+```
 
 ## Installation
 
