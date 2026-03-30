@@ -9,7 +9,7 @@ import argparse
 import json
 import sys
 from datetime import datetime
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from dotenv import load_dotenv
 
@@ -38,6 +38,12 @@ BUILTIN_CONFLICTS: List[Dict] = [
     {"role_a": "create_vendor", "role_b": "approve_vendor",
      "risk": "Critical", "category": "Procurement",
      "rationale": "Self-approving vendor creation allows ghost vendor fraud."},
+    {"role_a": "accounts_payable", "role_b": "accounts_receivable",
+     "risk": "High", "category": "Financial Controls",
+     "rationale": "Managing both payable and receivable functions removes segregation across cash handling."},
+    {"role_a": "create_vendor", "role_b": "approve_payment",
+     "risk": "High", "category": "Procurement",
+     "rationale": "Creating vendors and approving payments enables fraudulent vendor setup and disbursement."},
     {"role_a": "manage_secrets", "role_b": "audit_secrets",
      "risk": "High", "category": "Security Operations",
      "rationale": "Managing and auditing secrets removes the independence of the review."},
@@ -115,6 +121,12 @@ def parse_args() -> argparse.Namespace:
 # ---------------------------------------------------------------------------
 
 
+def normalise_role(role: Any) -> str:
+    """Normalise role names so equivalent forms compare consistently."""
+    value = str(role).strip().lower()
+    return value.replace("-", "_").replace(" ", "_")
+
+
 def load_users(path: str) -> Dict[str, List[str]]:
     """Load user-to-roles mapping from JSON file.
 
@@ -131,15 +143,33 @@ def load_users(path: str) -> Dict[str, List[str]]:
         print(f"ERROR: Users file not found: '{path}'", file=sys.stderr)
         sys.exit(1)
     except json.JSONDecodeError as exc:
-        print(f"ERROR: Invalid JSON in users file — {exc}", file=sys.stderr)
+        print(f"ERROR: Invalid JSON in users file - {exc}", file=sys.stderr)
         sys.exit(1)
 
     if not isinstance(data, dict):
         print("ERROR: Users file must be a JSON object mapping usernames to role lists.", file=sys.stderr)
         sys.exit(1)
 
-    return {k: [r.lower() for r in v] for k, v in data.items()}
+    if "users" in data:
+        users = data.get("users")
+        if not isinstance(users, list):
+            print("ERROR: 'users' must be a list of user objects.", file=sys.stderr)
+            sys.exit(1)
 
+        normalised: Dict[str, List[str]] = {}
+        for entry in users:
+            if not isinstance(entry, dict):
+                print("ERROR: Each user entry must be an object.", file=sys.stderr)
+                sys.exit(1)
+            username = str(entry.get("username", "")).strip()
+            roles = entry.get("roles", [])
+            if not username or not isinstance(roles, list):
+                print("ERROR: Each user entry must include username and roles list.", file=sys.stderr)
+                sys.exit(1)
+            normalised[username] = [normalise_role(role) for role in roles]
+        return normalised
+
+    return {str(k): [normalise_role(role) for role in v] for k, v in data.items()}
 
 def load_custom_conflicts(path: str) -> List[Dict]:
     """Load custom conflict pairs from JSON file.
