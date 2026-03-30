@@ -8,9 +8,8 @@ markdown summary table. Detects circular dependencies.
 import argparse
 import csv
 import sys
-from collections import defaultdict, deque
 from datetime import datetime
-from typing import Dict, List, Optional, Set, Tuple
+from typing import Dict, List, Set
 
 from dotenv import load_dotenv
 
@@ -62,17 +61,45 @@ def load_vendors(path: str) -> List[Dict[str, str]]:
         print(f"ERROR: Vendors file not found: '{path}'", file=sys.stderr)
         sys.exit(1)
 
-    required = {"vendor", "dependencies", "criticality", "data_access", "tier"}
-    if rows and not required.issubset(set(rows[0].keys())):
-        missing = required - set(rows[0].keys())
-        print(f"ERROR: CSV missing columns: {', '.join(missing)}", file=sys.stderr)
-        sys.exit(1)
-
     if not rows:
         print("ERROR: Vendors CSV is empty.", file=sys.stderr)
         sys.exit(1)
 
-    return rows
+    columns = set(rows[0].keys())
+    canonical = {"vendor", "dependencies", "criticality", "data_access", "tier"}
+    alternate = {"vendor_name", "depends_on", "criticality", "tier"}
+
+    if canonical.issubset(columns):
+        return rows
+
+    if alternate.issubset(columns):
+        id_to_name = {
+            row.get("vendor_id", "").strip(): row.get("vendor_name", "").strip()
+            for row in rows
+            if row.get("vendor_id") and row.get("vendor_name")
+        }
+        normalised: List[Dict[str, str]] = []
+        for row in rows:
+            raw_dependencies = row.get("depends_on", "")
+            dependencies = []
+            for dependency in raw_dependencies.split("|"):
+                dependency = dependency.strip()
+                if not dependency:
+                    continue
+                dependencies.append(id_to_name.get(dependency, dependency))
+
+            normalised.append({
+                "vendor": row.get("vendor_name", ""),
+                "dependencies": "|".join(dependencies),
+                "criticality": row.get("criticality", "Medium"),
+                "data_access": row.get("data_access", "no"),
+                "tier": row.get("tier", "1"),
+            })
+        return normalised
+
+    missing = canonical - columns
+    print(f"ERROR: CSV missing columns: {', '.join(sorted(missing))}", file=sys.stderr)
+    sys.exit(1)
 
 
 # ---------------------------------------------------------------------------
