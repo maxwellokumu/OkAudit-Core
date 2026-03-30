@@ -1,27 +1,26 @@
-# OkAudit · AI-Powered IT Audit Automation
+# OkAudit Core
 
 [![CI](https://github.com/maxwellokumu/OkAudit/actions/workflows/ci.yml/badge.svg)](https://github.com/maxwellokumu/OkAudit/actions/workflows/ci.yml)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Claude Skills](https://img.shields.io/badge/Claude-Skills-7C3AED)](https://claude.ai)
 [![Coverage](https://img.shields.io/badge/coverage-85%25-green.svg)]()
 [![Frameworks](https://img.shields.io/badge/frameworks-SOC2%20%7C%20ISO27001%20%7C%20PCI--DSS%20%7C%20NIST%20%7C%20GDPR-blue)]()
 
-> **OkAudit** is a production-grade AI audit automation framework that transforms traditional, manual IT audit workflows into modular, intelligent, and executable AI skills — running natively inside Claude or via CLI.
+> **OkAudit Core** is the canonical source repository for building, testing, and evolving reusable IT audit capabilities. It is the upstream development home for the OkAudit virtual audit team: specialist roles, structured playbooks, and executable skills designed to support real-world assurance work from planning through reporting.
 
 ---
 
 ## Table of Contents
 
 - [Overview](#overview)
-- [Key Features](#key-features)
+- [What OkAudit Core Is](#what-okaudit-core-is)
 - [Architecture](#architecture)
 - [Skill Domains](#skill-domains)
 - [Quick Start](#quick-start)
 - [Installation](#installation)
 - [Usage](#usage)
   - [CLI Usage](#cli-usage)
-  - [Claude Integration](#claude-integration)
+  - [Capability Packaging](#capability-packaging)
 - [Configuration](#configuration)
 - [Environment Variables](#environment-variables)
 - [Testing](#testing)
@@ -29,81 +28,77 @@
 - [Project Structure](#project-structure)
 - [Roadmap](#roadmap)
 - [Contributing](#contributing)
+- [Author](#author)
 - [License](#license)
 
 ---
 
 ## Overview
 
-Modern IT audits are slow, fragmented, and difficult to scale. Audit teams rely on static checklists, manual evidence collection, and inconsistent review processes — leading to delayed cycles, compliance gaps, and limited real-time visibility.
+IT audit work is still slowed down by repeated setup, fragmented evidence collection, inconsistent review quality, and workflows that are difficult to scale across teams and frameworks.
 
-**OkAudit** addresses this by delivering a virtual audit team of **9 specialist roles** and **36 AI-powered skills**, each designed to perform discrete, real-world audit tasks. These skills can be orchestrated into end-to-end audit pipelines or executed independently against live system data.
+**OkAudit Core** addresses this by turning practical audit methods into reusable capabilities. The repository organizes a virtual audit team of **9 specialist roles** and **36 skills**, each built to support discrete audit tasks across identity, compliance, privacy, application security, network security, logging, vendor risk, hardware and physical controls, and lead auditor workflows.
 
-### What OkAudit Does Differently
+These capabilities can be developed and tested independently, executed through CLI workflows, and packaged downstream for practitioner-facing use.
 
-| Traditional Audit | OkAudit |
-|---|---|
-| Static checklists | AI-driven audit agents |
-| Manual evidence gathering | Automated data ingestion and analysis |
-| Inconsistent review quality | Structured, framework-aligned outputs |
-| Weeks-long cycles | Continuous, near-real-time auditing |
-| Siloed tooling | Unified multi-framework skill system |
+### Why This Matters
 
-### Business Impact
+OkAudit Core is designed to help teams:
 
-- Reduce audit cycle time by **50–80%**
-- Improve risk detection accuracy through consistent, structured analysis
-- Standardize compliance processes across SOC2, ISO 27001, PCI-DSS, NIST, and GDPR
-- Scale audit capabilities without proportional headcount growth
-
-### Who This Is For
-
-- IT Audit Teams and Internal Audit functions
-- Security Engineers and GRC practitioners
-- Compliance Officers managing multi-framework obligations
-- Consulting firms delivering audit services at scale
-- SaaS and Fintech platforms with continuous compliance requirements
+- structure audit planning more consistently
+- improve evidence review and control analysis
+- standardize workflows across multiple assurance domains
+- reduce repeated setup work in recurring audits
+- move faster from fieldwork to defensible reporting
 
 ---
 
-## Key Features
+## What OkAudit Core Is
 
-- **Multi-Agent Audit System** — 9 specialized audit roles, each with dedicated skills for their domain
-- **36 Modular Skills** — Independent or pipeline execution; each skill is self-contained with its own logic, inputs, and outputs
-- **Claude-Native Integration** — Each module ships with a `skill.yaml` enabling natural language execution directly inside Claude
-- **Framework-Aware Auditing** — Built-in control mappings for SOC2, ISO 27001, PCI-DSS, NIST, and GDPR
-- **CLI + AI Execution** — Run audits programmatically via CLI or interactively through Claude's code execution environment
-- **Structured Outputs** — JSON and CSV outputs ready for downstream reporting, dashboards, or SIEM ingestion
+OkAudit Core is:
+
+- the canonical development repository for the OkAudit capability library
+- the place where specialist audit skills are built, tested, and refined
+- a framework-aware source of reusable audit workflows
+- the upstream foundation behind the Claude-ready distribution repository
+
+OkAudit currently has two complementary public layers:
+
+- **OkAudit Core**: the source repository where capabilities are built, tested, and extended
+- **OkAudit Claude Skills**: the distribution repository where skills are packaged for direct Claude upload and use
+
+Use this repository if you want the source logic, development workflow, tests, and capability framework.  
+Use the Claude Skills repository if you want upload-ready practitioner packages.
 
 ---
 
 ## Architecture
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
-│                        OkAudit                              │
-│                 AI Audit Automation Framework               │
+│                         OkAudit Core                        │
+│             Source Repository for Audit Capabilities        │
 └─────────────────────────────────────────────────────────────┘
                               │
           ┌───────────────────┼───────────────────┐
           ▼                   ▼                   ▼
    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
-   │  CLI Runner │    │   Claude    │    │  Pipeline   │
-   │  (main.py)  │    │ Integration │    │ Orchestrator│
+   │  CLI Runner │    │ Skill Logic │    │  Packaging  │
+   │  (main.py)  │    │ + Playbooks │    │   Layer     │
    └──────┬──────┘    └──────┬──────┘    └──────┬──────┘
           └───────────────────┼───────────────────┘
                               │
                 ┌─────────────▼─────────────┐
-                │      Skill Registry        │
-                │  (36 modular audit skills) │
+                │     Capability Library     │
+                │  (36 reusable audit skills)│
                 └─────────────┬─────────────┘
                               │
         ┌─────────────────────┼─────────────────────┐
         ▼                     ▼                     ▼
  ┌────────────┐       ┌────────────┐       ┌────────────┐
  │  Evidence  │       │  Analysis  │       │  Reporting │
- │  Ingestion │──────▶│   Engine   │──────▶│   Layer    │
- │ (JSON/CSV) │       │(AI + Rules)│       │(JSON/CSV)  │
+ │  Inputs    │──────▶│   Engine   │──────▶│  Outputs   │
+ │ (JSON/CSV) │       │(Rules+Logic)│      │(MD/JSON/CSV)│
  └────────────┘       └────────────┘       └────────────┘
                               │
               ┌───────────────┼───────────────┐
@@ -112,7 +107,7 @@ Modern IT audits are slow, fragmented, and difficult to scale. Audit teams rely 
         │  SOC2    │   │ ISO27001 │   │ PCI-DSS  │
         │  NIST    │   │  GDPR    │   │ Mappings │
         └──────────┘   └──────────┘   └──────────┘
-```
+
 
 OkAudit follows a layered architecture where raw system data is ingested, transformed through modular AI skills, and surfaced as structured, framework-aligned audit intelligence. Each layer is independently testable and replaceable.
 
@@ -124,21 +119,21 @@ OkAudit organizes its 36 skills across 9 specialist audit roles:
 
 | Role | Skills | Key Capabilities |
 |------|--------|-----------------|
-| 🧑‍💼 **Lead IT Auditor** | Scope, Reporting, Orchestration | Audit scoping, risk prioritization, executive reporting |
-| 🔐 **Identity & Access** | Access Review, SoD Analysis, Privilege Audit | Over-privileged account detection, separation of duties analysis, MFA compliance |
-| 📜 **Compliance** | Policy Validation, Control Tracking, Gap Analysis | Framework control mapping, policy drift detection, remediation tracking |
-| 📊 **Log Monitoring** | Threat Detection, Anomaly Analysis, Audit Trail | Log ingestion, behavioral anomaly detection, incident reconstruction |
-| 🏢 **Vendor Risk** | Risk Scoring, Third-Party Review, Contract Analysis | Vendor classification, risk scoring, SLA compliance checks |
-| 🌐 **Network Security** | Firewall Review, Segmentation Audit, Exposure Analysis | Firewall rule analysis, network zone validation, open port enumeration |
-| 🔒 **Privacy & Data** | Data Mapping, Consent Review, Retention Audit | PII identification, data flow mapping, consent chain validation |
-| 🖥️ **Hardware & Assets** | Asset Inventory, Configuration Baseline, EOL Detection | Asset discovery, baseline drift detection, end-of-life flagging |
-| 💻 **Application Security** | Code Review, Dependency Audit, Auth Analysis | SAST-aligned code review, CVE detection in dependencies, auth flow analysis |
+|  **Lead IT Auditor** | Scope, Reporting, Orchestration | Audit scoping, risk prioritization, executive reporting |
+| **Identity & Access** | Access Review, SoD Analysis, Privilege Audit | Over-privileged account detection, separation of duties analysis, MFA compliance |
+|  **Compliance** | Policy Validation, Control Tracking, Gap Analysis | Framework control mapping, policy drift detection, remediation tracking |
+|  **Log Monitoring** | Threat Detection, Anomaly Analysis, Audit Trail | Log ingestion, behavioral anomaly detection, incident reconstruction |
+|  **Vendor Risk** | Risk Scoring, Third-Party Review, Contract Analysis | Vendor classification, risk scoring, SLA compliance checks |
+|  **Network Security** | Firewall Review, Segmentation Audit, Exposure Analysis | Firewall rule analysis, network zone validation, open port enumeration |
+|  **Privacy & Data** | Data Mapping, Consent Review, Retention Audit | PII identification, data flow mapping, consent chain validation |
+|  **Hardware & Assets** | Asset Inventory, Configuration Baseline, EOL Detection | Asset discovery, baseline drift detection, end-of-life flagging |
+|  **Application Security** | Code Review, Dependency Audit, Auth Analysis | SAST-aligned code review, CVE detection in dependencies, auth flow analysis |
 
 ---
 
 ## Quick Start
 
-The fastest way to run OkAudit is to clone the repo and execute a skill directly:
+The fastest way to work with OkAudit Core is to clone the repository and execute a skill directly.
 
 ```bash
 # Clone the repository
@@ -150,13 +145,12 @@ python -m venv venv
 source venv/bin/activate       # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 
-# Run your first audit — scope definition for an AWS payment app
+# Run an audit scope workflow
 cd lead-it-auditor/audit-scope-checklist
 python main.py \
   --system "AWS payment application" \
   --roles "iam,network" \
   --frameworks "PCI-DSS"
-```
 
 ---
 
@@ -166,7 +160,7 @@ python main.py \
 
 - Python 3.8 or higher
 - `pip` and `venv`
-- AWS or Azure credentials (optional — only required for cloud-connected skills)
+- AWS or Azure credentials only for cloud-connected skills
 
 ### Steps
 
@@ -177,7 +171,7 @@ cd OkAudit
 
 # 2. Create and activate a virtual environment
 python -m venv venv
-source venv/bin/activate
+source venv/bin/activate       # Windows: venv\Scripts\activate
 
 # 3. Install dependencies
 pip install -r requirements.txt
@@ -185,6 +179,7 @@ pip install -r requirements.txt
 # 4. (Optional) Configure environment variables
 cp .env.example .env
 # Edit .env with your credentials
+
 ```
 
 ---
@@ -378,7 +373,7 @@ tests/
 
 ## Compliance Frameworks
 
-OkAudit skill outputs include `framework_ref` fields mapping every finding to specific controls, making results directly usable in audit workpapers and control matrices.
+OkAudit Core is built around practical workflows that can support framework-aware assurance work across:
 
 | Framework | Scope | Example Controls |
 |-----------|-------|-----------------|
@@ -387,6 +382,8 @@ OkAudit skill outputs include `framework_ref` fields mapping every finding to sp
 | **PCI-DSS v4** | Payment card security | 7.1, 8.3, 10.2, 11.3 |
 | **NIST CSF** | Cybersecurity framework | ID.AM, PR.AC, DE.CM, RS.AN |
 | **GDPR** | Data protection | Art. 5, Art. 25, Art. 30, Art. 32 |
+
+The focus is not just control naming, but reusable workflows that help practitioners test, interpret, and report on control effectiveness.
 
 ---
 
@@ -432,30 +429,33 @@ OkAudit/
 
 ## Roadmap
 
-| Milestone | Status | Target |
-|-----------|--------|--------|
-| 36 core skills | ✅ Complete | — |
-| Claude skill.yaml integration | ✅ Complete | — |
-| CLI runner for all domains | ✅ Complete | — |
-| Web dashboard (Flask/React) | 🔄 In Progress | Q3 2026 |
-| Real-time continuous monitoring | 🗓 Planned | Q3 2026 |
-| SIEM integration (Splunk, Elastic) | 🗓 Planned | Q4 2026 |
-| Multi-LLM support (GPT-4, Gemini) | 🗓 Planned | Q4 2026 |
-| GRC platform connectors | 🗓 Planned | 2027 |
+| Milestone | Status |
+|-----------|--------|
+| 36 core skills | Complete |
+| Claude-ready packaging layer | Complete |
+| CLI execution across domains | Complete |
+| Expanded framework coverage | In progress |
+| Jurisdiction-specific extensions | Planned |
+| Additional assurance workflows | Planned |
+| Broader integration surfaces | Planned |
+
+Future expansion may include more regional and regulatory support, including jurisdiction-specific privacy and cyber governance workflows where practitioner demand justifies it.
+
 
 ---
 
 ## Contributing
 
-Contributions are welcome. To add a new skill or improve an existing one:
+Contributions are welcome from practitioners and builders who want to improve reusable audit workflows.
 
 1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/my-new-skill`
-3. Follow the existing skill structure — include `main.py`, `skill.yaml`, `config.yaml`, and tests under `tests/`
-4. Ensure all tests pass: `pytest tests/`
-5. Open a pull request with a clear description of what the skill does and which framework controls it addresses
+2. Create a feature branch
+3. Follow the existing skill structure
+4. Ensure tests pass
+5. Open a pull request with a clear description of the capability being added or improved
 
-Please read `CONTRIBUTING.md` for code style guidelines and the full skill authoring guide.
+Please read `CONTRIBUTING.md` for code style, testing standards, and skill authoring guidance.
+
 
 ---
 
