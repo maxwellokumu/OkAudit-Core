@@ -1,14 +1,5 @@
-from pathlib import Path
-import sys
-import importlib
-
-
-ROOT = Path(__file__).resolve().parents[1]
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
-
-cli = importlib.import_module("okaudit.cli")
-REGISTRY = cli.REGISTRY
+from okaudit import cli
+from okaudit.cli import REGISTRY
 
 
 def test_registry_contains_expected_commands():
